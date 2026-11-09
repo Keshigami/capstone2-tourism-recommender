@@ -1,0 +1,402 @@
+{
+  "counts": {
+    "places": 437,
+    "users": 300,
+    "rating_rows_raw": 10000,
+    "rating_pairs_unique": 9597,
+    "duplicate_user_place_pairs": 403,
+    "cities": 5,
+    "categories": 6,
+    "ratings_per_user_mean": 32.0,
+    "ratings_per_place_mean": 22.0,
+    "matrix_density_pct": 7.32
+  },
+  "cleaning": [
+    "Dropped 'Unnamed: 11' (empty) and 'Unnamed: 12' (serial number) from the places sheet.",
+    "Dropped 'Coordinate' (duplicates Lat/Long) and 'Time_Minutes' (232 of 437 missing, 53%).",
+    "Trimmed and capitalised Category so 'Budaya' and 'budaya ' are one class.",
+    "Averaged 403 duplicate (user, place) rating pairs: 10000 rows -> 9597 pairs.",
+    "No missing values in users or ratings; no duplicate users or places."
+  ],
+  "users": {
+    "age_min": 18,
+    "age_max": 40,
+    "age_mean": 28.7,
+    "age_median": 29.0,
+    "age_bands": {
+      "(17.978, 22.4]": 63,
+      "(22.4, 26.8]": 48,
+      "(26.8, 31.2]": 85,
+      "(31.2, 35.6]": 49,
+      "(35.6, 40.0]": 55
+    },
+    "home_cities": 28,
+    "top_home_cities": {
+      "Bekasi": 39,
+      "Semarang": 22,
+      "Lampung": 20,
+      "Yogyakarta": 20,
+      "Bogor": 17,
+      "Cirebon": 14,
+      "Jakarta Selatan": 14,
+      "Subang": 14,
+      "Depok": 12,
+      "Ponorogo": 11
+    },
+    "top_provinces": {
+      "Jawa Barat": 116,
+      "DKI Jakarta": 46,
+      "Jawa Tengah": 43,
+      "DIY": 28,
+      "Sumatera Selatan": 25
+    }
+  },
+  "places": {
+    "by_category": {
+      "Taman hiburan": 135,
+      "Budaya": 117,
+      "Cagar alam": 106,
+      "Bahari": 47,
+      "Tempat ibadah": 17,
+      "Pusat perbelanjaan": 15
+    },
+    "category_en": {
+      "Budaya": "Culture",
+      "Taman hiburan": "Amusement park",
+      "Cagar alam": "Nature preserve",
+      "Bahari": "Marine / beach",
+      "Pusat perbelanjaan": "Shopping centre",
+      "Tempat ibadah": "Place of worship"
+    },
+    "by_city": {
+      "Yogyakarta": 126,
+      "Bandung": 124,
+      "Jakarta": 84,
+      "Semarang": 57,
+      "Surabaya": 46
+    },
+    "city_by_category": {
+      "Bandung": {
+        "Cagar alam": 54,
+        "Taman hiburan": 39,
+        "Budaya": 22,
+        "Tempat ibadah": 8,
+        "Pusat perbelanjaan": 1
+      },
+      "Jakarta": {
+        "Budaya": 32,
+        "Taman hiburan": 27,
+        "Pusat perbelanjaan": 10,
+        "Bahari": 8,
+        "Cagar alam": 4,
+        "Tempat ibadah": 3
+      },
+      "Semarang": {
+        "Cagar alam": 20,
+        "Budaya": 15,
+        "Taman hiburan": 15,
+        "Bahari": 4,
+        "Tempat ibadah": 3
+      },
+      "Surabaya": {
+        "Taman hiburan": 18,
+        "Budaya": 18,
+        "Cagar alam": 5,
+        "Tempat ibadah": 3,
+        "Pusat perbelanjaan": 1,
+        "Bahari": 1
+      },
+      "Yogyakarta": {
+        "Taman hiburan": 36,
+        "Bahari": 34,
+        "Budaya": 30,
+        "Cagar alam": 23,
+        "Pusat perbelanjaan": 3
+      }
+    },
+    "top_category_per_city": {
+      "Bandung": "Cagar alam",
+      "Jakarta": "Budaya",
+      "Semarang": "Cagar alam",
+      "Surabaya": "Taman hiburan",
+      "Yogyakarta": "Taman hiburan"
+    },
+    "nature_preserve_by_city": {
+      "Bandung": 54,
+      "Yogyakarta": 23,
+      "Semarang": 20,
+      "Surabaya": 5,
+      "Jakarta": 4
+    },
+    "nature_best_city": "Bandung",
+    "price": {
+      "free_places": 137,
+      "median": 5000.0,
+      "mean": 24652.0,
+      "max": 900000,
+      "max_place": "Pulau Pelangi"
+    }
+  },
+  "ratings": {
+    "rating_distribution": {
+      "1": 1582,
+      "2": 2044,
+      "3": 2011,
+      "4": 2079,
+      "5": 1881
+    },
+    "global_mean": 3.066,
+    "place_mean_min": 2.06,
+    "place_mean_max": 3.94,
+    "sheet_rating_vs_user_rating_corr": 0.008,
+    "signal": {
+      "place_mean_std_observed": 0.3078,
+      "place_mean_std_shuffled": 0.2986,
+      "user_mean_std_observed": 0.2935,
+      "user_mean_std_shuffled": 0.2446,
+      "rating_entropy_bits": 2.315,
+      "max_entropy_bits": 2.322,
+      "n_shuffles": 50
+    },
+    "top10_by_mean": [
+      {
+        "Place_Id": 416,
+        "Place_Name": "Keraton Surabaya",
+        "City": "Surabaya",
+        "Category": "Budaya",
+        "Price": 0,
+        "mean_rating": 3.94,
+        "n_ratings": 28,
+        "weighted_rating": 3.556
+      },
+      {
+        "Place_Id": 139,
+        "Place_Name": "Puncak Gunung Api Purba - Nglanggeran",
+        "City": "Yogyakarta",
+        "Category": "Cagar alam",
+        "Price": 10000,
+        "mean_rating": 3.88,
+        "n_ratings": 17,
+        "weighted_rating": 3.422
+      },
+      {
+        "Place_Id": 52,
+        "Place_Name": "Kampung Cina",
+        "City": "Jakarta",
+        "Category": "Budaya",
+        "Price": 15000,
+        "mean_rating": 3.85,
+        "n_ratings": 17,
+        "weighted_rating": 3.409
+      },
+      {
+        "Place_Id": 254,
+        "Place_Name": "Teras Cikapundung BBWS",
+        "City": "Bandung",
+        "Category": "Taman hiburan",
+        "Price": 0,
+        "mean_rating": 3.79,
+        "n_ratings": 19,
+        "weighted_rating": 3.401
+      },
+      {
+        "Place_Id": 322,
+        "Place_Name": "Bukit Jamur",
+        "City": "Bandung",
+        "Category": "Cagar alam",
+        "Price": 0,
+        "mean_rating": 3.77,
+        "n_ratings": 28,
+        "weighted_rating": 3.459
+      },
+      {
+        "Place_Id": 97,
+        "Place_Name": "Monumen Yogya Kembali",
+        "City": "Yogyakarta",
+        "Category": "Budaya",
+        "Price": 15000,
+        "mean_rating": 3.76,
+        "n_ratings": 21,
+        "weighted_rating": 3.406
+      },
+      {
+        "Place_Id": 112,
+        "Place_Name": "Bukit Bintang Yogyakarta",
+        "City": "Yogyakarta",
+        "Category": "Taman hiburan",
+        "Price": 25000,
+        "mean_rating": 3.76,
+        "n_ratings": 17,
+        "weighted_rating": 3.371
+      },
+      {
+        "Place_Id": 321,
+        "Place_Name": "Glamping Lakeside Rancabali",
+        "City": "Bandung",
+        "Category": "Taman hiburan",
+        "Price": 30000,
+        "mean_rating": 3.75,
+        "n_ratings": 20,
+        "weighted_rating": 3.392
+      },
+      {
+        "Place_Id": 1,
+        "Place_Name": "Monumen Nasional",
+        "City": "Jakarta",
+        "Category": "Budaya",
+        "Price": 20000,
+        "mean_rating": 3.72,
+        "n_ratings": 18,
+        "weighted_rating": 3.362
+      },
+      {
+        "Place_Id": 157,
+        "Place_Name": "Pantai Baron",
+        "City": "Yogyakarta",
+        "Category": "Bahari",
+        "Price": 10000,
+        "mean_rating": 3.68,
+        "n_ratings": 22,
+        "weighted_rating": 3.374
+      }
+    ],
+    "top10_by_weighted": [
+      {
+        "Place_Id": 416,
+        "Place_Name": "Keraton Surabaya",
+        "City": "Surabaya",
+        "Category": "Budaya",
+        "Price": 0,
+        "mean_rating": 3.94,
+        "n_ratings": 28,
+        "weighted_rating": 3.556
+      },
+      {
+        "Place_Id": 322,
+        "Place_Name": "Bukit Jamur",
+        "City": "Bandung",
+        "Category": "Cagar alam",
+        "Price": 0,
+        "mean_rating": 3.77,
+        "n_ratings": 28,
+        "weighted_rating": 3.459
+      },
+      {
+        "Place_Id": 139,
+        "Place_Name": "Puncak Gunung Api Purba - Nglanggeran",
+        "City": "Yogyakarta",
+        "Category": "Cagar alam",
+        "Price": 10000,
+        "mean_rating": 3.88,
+        "n_ratings": 17,
+        "weighted_rating": 3.422
+      },
+      {
+        "Place_Id": 52,
+        "Place_Name": "Kampung Cina",
+        "City": "Jakarta",
+        "Category": "Budaya",
+        "Price": 15000,
+        "mean_rating": 3.85,
+        "n_ratings": 17,
+        "weighted_rating": 3.409
+      },
+      {
+        "Place_Id": 97,
+        "Place_Name": "Monumen Yogya Kembali",
+        "City": "Yogyakarta",
+        "Category": "Budaya",
+        "Price": 15000,
+        "mean_rating": 3.76,
+        "n_ratings": 21,
+        "weighted_rating": 3.406
+      },
+      {
+        "Place_Id": 300,
+        "Place_Name": "Sanghyang Heuleut",
+        "City": "Bandung",
+        "Category": "Cagar alam",
+        "Price": 10000,
+        "mean_rating": 3.66,
+        "n_ratings": 29,
+        "weighted_rating": 3.401
+      },
+      {
+        "Place_Id": 254,
+        "Place_Name": "Teras Cikapundung BBWS",
+        "City": "Bandung",
+        "Category": "Taman hiburan",
+        "Price": 0,
+        "mean_rating": 3.79,
+        "n_ratings": 19,
+        "weighted_rating": 3.401
+      },
+      {
+        "Place_Id": 321,
+        "Place_Name": "Glamping Lakeside Rancabali",
+        "City": "Bandung",
+        "Category": "Taman hiburan",
+        "Price": 30000,
+        "mean_rating": 3.75,
+        "n_ratings": 20,
+        "weighted_rating": 3.392
+      },
+      {
+        "Place_Id": 279,
+        "Place_Name": "Masjid Agung Trans Studio Bandung",
+        "City": "Bandung",
+        "Category": "Tempat ibadah",
+        "Price": 0,
+        "mean_rating": 3.64,
+        "n_ratings": 28,
+        "weighted_rating": 3.389
+      },
+      {
+        "Place_Id": 157,
+        "Place_Name": "Pantai Baron",
+        "City": "Yogyakarta",
+        "Category": "Bahari",
+        "Price": 10000,
+        "mean_rating": 3.68,
+        "n_ratings": 22,
+        "weighted_rating": 3.374
+      }
+    ],
+    "highest_rated_place": "Keraton Surabaya",
+    "loved_threshold": 3.5,
+    "loved_count": 31,
+    "loved_by_city": {
+      "Bandung": 11,
+      "Yogyakarta": 10,
+      "Jakarta": 5,
+      "Surabaya": 4,
+      "Semarang": 1
+    },
+    "loved_by_category": {
+      "Taman hiburan": 13,
+      "Cagar alam": 9,
+      "Budaya": 7,
+      "Bahari": 1,
+      "Tempat ibadah": 1
+    },
+    "most_loved_city": "Bandung",
+    "most_loved_category": "Taman hiburan",
+    "loved_share_by_category_pct": {
+      "Taman hiburan": 9.6,
+      "Budaya": 6.0,
+      "Cagar alam": 8.5,
+      "Bahari": 2.1,
+      "Tempat ibadah": 5.9,
+      "Pusat perbelanjaan": 0.0
+    }
+  },
+  "charts": [
+    "users_age.png",
+    "users_city.png",
+    "places_category.png",
+    "places_city_category.png",
+    "ratings_weighted.png",
+    "top_loved.png",
+    "rating_signal.png"
+  ]
+}

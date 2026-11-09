@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Tourism recommender{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/ui.css">
+<style>
+  nav.tabs{display:flex;gap:6px;flex-wrap:wrap} nav.tabs a{color:var(--fg-2);text-decoration:none;padding:4px 10px;border-radius:999px;border:1px solid transparent;font-size:.9rem}
+  nav.tabs a.on{color:var(--accent);border-color:var(--accent)}
+  .stats{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:var(--gap)}
+  .two{display:grid;gap:var(--gap);grid-template-columns:minmax(0,1fr) minmax(0,2fr)} @media (max-width:760px){.two{grid-template-columns:1fr}}
+  .rec{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line)} .rec:last-child{border-bottom:0}
+  .rec .n{font-family:var(--mono);color:var(--fg-3);padding-top:2px} .rec .why{font-size:.84rem;color:var(--fg-2);margin-top:2px}
+  .rec .name{font-weight:600} .rec .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center}
+  .pill.cf{border-color:var(--accent);color:var(--accent)} .pill.cb{border-color:var(--warn);color:var(--warn)} .pill.hy{border-color:var(--ok);color:var(--ok)}
+  .err{border:1px solid var(--danger);color:var(--danger);border-radius:var(--r);padding:12px 14px;margin-bottom:var(--gap)}
+  details summary{cursor:pointer;color:var(--fg-2);font-size:.9rem}
+  .form-grid{display:grid;gap:10px}
+  .f{display:grid;gap:4px}
+  .section{margin-bottom:var(--gap)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <h1>Tourism recommender</h1>
+  <span class="sub">Indonesia's five big cities, 437 places, 300 raters. Pick a user to see what they rated and what to visit next, or describe your interests.</span>
+  <span class="badge on">{{ 'SVD + content' if metrics else 'untrained' }}</span>
+  <span class="badge">:{{ port }}</span>
+</header>
+<nav class="tabs section">
+  <a href="/" class="{{ 'on' if active == 'home' else '' }}">Recommend</a>
+  <a href="/eda" class="{{ 'on' if active == 'eda' else '' }}">Findings and charts</a>
+  <a href="/metrics">metrics.json</a>
+  <a href="/docs">API</a>
+</nav>
+{% block body %}{% endblock %}
+<p class="meta" style="margin-top:24px">Model: {{ model_source }}. Caltech CTME PGC AI/ML capstone 2, part 2.</p>
+</div>
+<script>
+  document.querySelectorAll('form[data-loading]').forEach(f => f.addEventListener('submit', () => {
+    const b = f.querySelector('button[type=submit]'); if (!b) return;
+    b.disabled = true; b.innerHTML = '<span class="spinner"></span> Working';
+  }));
+</script>
+</body>
+</html>

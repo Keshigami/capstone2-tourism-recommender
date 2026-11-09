@@ -1,0 +1,51 @@
+{
+  "split": {
+    "train_pairs": 7678,
+    "test_pairs": 1919,
+    "test_frac": 0.2,
+    "seed": 42
+  },
+  "rmse": {
+    "baseline_global_mean": 1.3634,
+    "baseline_user_mean": 1.3828,
+    "baseline_item_mean": 1.4025,
+    "user_knn": 1.3843,
+    "item_knn": 1.3822,
+    "svd": 1.3838
+  },
+  "ranking": {
+    "collaborative": {
+      "hit_rate@10": 0.0536,
+      "precision@5": 0.0071,
+      "recall@10": 0.0193
+    },
+    "content": {
+      "hit_rate@10": 0.05,
+      "precision@5": 0.0029,
+      "recall@10": 0.0212
+    },
+    "hybrid": {
+      "hit_rate@10": 0.0536,
+      "precision@5": 0.0029,
+      "recall@10": 0.02
+    },
+    "random_expected": {
+      "precision@5": 0.0067,
+      "hit_rate@10": 0.0649
+    },
+    "n_eval_users": 280
+  },
+  "relevant_threshold": 4.0,
+  "model": {
+    "cf_method": "svd",
+    "k_neighbours": 10,
+    "svd_components": 2,
+    "tfidf_vocab": 2678
+  },
+  "data": {
+    "users": 300,
+    "places": 437,
+    "rating_pairs": 9597
+  },
+  "eval_seconds": 4.9
+}

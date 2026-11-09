@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% set active = 'eda' %}
+{% block title %}Findings · Tourism recommender{% endblock %}
+{% block body %}
+{% if not f %}
+<div class="empty">No findings yet. Run <code>just train</code> to build the charts and models/eda.json, then reload.</div>
+{% else %}
+{% set c = f.counts %}{% set r = f.ratings %}{% set p = f.places %}{% set u = f.users %}
+<div class="stats">
+  <div class="card stat"><b>{{ c.places }}</b><span>places in {{ c.cities }} cities, {{ c.categories }} categories</span></div>
+  <div class="card stat"><b>{{ c.users }}</b><span>raters, age {{ u.age_min }}–{{ u.age_max }} (median {{ u.age_median|int }})</span></div>
+  <div class="card stat"><b>{{ '{:,}'.format(c.rating_pairs_unique) }}</b><span>unique user–place ratings from {{ '{:,}'.format(c.rating_rows_raw) }} rows ({{ c.duplicate_user_place_pairs }} duplicates averaged)</span></div>
+  <div class="card stat"><b>{{ c.matrix_density_pct }}%</b><span>of the user × place matrix is filled; ~{{ c.ratings_per_user_mean|int }} ratings per user</span></div>
+</div>
+
+<div class="card section">
+  <h2>What the data says, in plain words</h2>
+  <ol style="margin:0;padding-left:20px">
+    <li><b>Who rates.</b> {{ c.users }} users aged {{ u.age_min }}–{{ u.age_max }}, mean {{ u.age_mean }}. Most come from {{ u.top_provinces.keys()|list|first }} ({{ u.top_provinces.values()|list|first }} users); the single biggest home city is {{ u.top_home_cities.keys()|list|first }} ({{ u.top_home_cities.values()|list|first }}), then {{ (u.top_home_cities.keys()|list)[1:4]|join(', ') }}.</li>
+    <li><b>What is on offer.</b> {{ p.by_category.keys()|list|first }} ({{ p.category_en[p.by_category.keys()|list|first] }}) is the largest category with {{ p.by_category.values()|list|first }} places, then {{ p.category_en[(p.by_category.keys()|list)[1]] }} ({{ (p.by_category.values()|list)[1] }}) and {{ p.category_en[(p.by_category.keys()|list)[2]] }} ({{ (p.by_category.values()|list)[2] }}). {{ p.by_city.keys()|list|first }} ({{ p.by_city.values()|list|first }}) and {{ (p.by_city.keys()|list)[1] }} ({{ (p.by_city.values()|list)[1] }}) hold more than half of all places.</li>
+    <li><b>Each city's speciality.</b> {% for city, cat in p.top_category_per_city.items() %}{{ city }}: {{ p.category_en[cat] }}{{ '; ' if not loop.last else '.' }}{% endfor %} For a nature enthusiast <b>{{ p.nature_best_city }}</b> is the clear choice with {{ p.nature_preserve_by_city[p.nature_best_city] }} of the {{ p.nature_preserve_by_city.values()|sum }} nature preserves.</li>
+    <li><b>Prices.</b> {{ p.price.free_places }} of {{ c.places }} places are free; the median ticket is Rp {{ '{:,}'.format(p.price.median|int) }}; the most expensive is {{ p.price.max_place }} at Rp {{ '{:,}'.format(p.price.max) }}.</li>
+    <li><b>Most loved.</b> Per-place mean user ratings run from {{ r.place_mean_min }} to {{ r.place_mean_max }} (global mean {{ r.global_mean }}). The top-rated spot is <b>{{ r.highest_rated_place }}</b>; by Bayesian weighted rating it is <b>{{ r.top10_by_weighted[0].Place_Name }}</b> ({{ r.top10_by_weighted[0].weighted_rating }}). Of the {{ r.loved_count }} places rated above {{ r.loved_threshold }}, <b>{{ r.most_loved_city }}</b> has the most ({{ r.loved_by_city[r.most_loved_city] }}) and <b>{{ p.category_en[r.most_loved_category] }}</b> is the most loved category ({{ r.loved_by_category[r.most_loved_category] }}), closely followed by {{ p.category_en[(r.loved_by_category.keys()|list)[1]] }} ({{ (r.loved_by_category.values()|list)[1] }}).</li>
+    <li><b>The ratings carry almost no signal.</b> User ratings are spread nearly evenly over 1–5 ({{ r.rating_distribution.values()|join(' / ') }}; entropy {{ r.signal.rating_entropy_bits }} of a maximum {{ r.signal.max_entropy_bits }} bits) and correlate {{ r.sheet_rating_vs_user_rating_corr }} with the sheet's own public rating. Shuffling every rating across users and places gives the same spread of per-place means ({{ r.signal.place_mean_std_observed }} observed vs {{ r.signal.place_mean_std_shuffled }} shuffled); per-user means spread a little more ({{ r.signal.user_mean_std_observed }} vs {{ r.signal.user_mean_std_shuffled }}). The rating file is synthetic noise around 3.07, which is why every collaborative predictor on the Recommend page sits at the global-mean baseline and the ranking hit-rate matches random. The "most loved" lists above are honest summaries of the file, not of real tourist taste. The content route (category, city, price, description) does not depend on these ratings and gives sensible, explainable suggestions.</li>
+  </ol>
+</div>
+
+<div class="grid section">
+  <figure class="card"><img src="/static/users_age.png" alt="Users by age band and an age box plot"><figcaption>Ages are spread over 18–40 with the biggest band at 27–31; no teenagers or seniors, so the raters are young adults.</figcaption></figure>
+  <figure class="card"><img src="/static/users_city.png" alt="Top 15 home cities of the raters"><figcaption>Raters come from {{ u.home_cities }} home cities; Bekasi alone sends {{ u.top_home_cities.Bekasi }}. Most are from West Java and Jakarta, so they are domestic weekend tourists.</figcaption></figure>
+  <figure class="card"><img src="/static/places_category.png" alt="Number of places per category"><figcaption>Amusement parks, culture and nature preserves make up {{ ((p.by_category['Taman hiburan'] + p.by_category['Budaya'] + p.by_category['Cagar alam']) * 100 / c.places)|round|int }}% of the catalogue; shopping centres and places of worship are rare.</figcaption></figure>
+  <figure class="card"><img src="/static/places_city_category.png" alt="Places by category in each of the five cities"><figcaption>Bandung is the nature city ({{ p.nature_preserve_by_city.Bandung }} preserves), Jakarta leans to culture and shopping, Yogyakarta has almost all the beaches ({{ p.city_by_category.Yogyakarta.Bahari }} of {{ p.by_category.Bahari }} marine spots).</figcaption></figure>
+  <figure class="card"><img src="/static/ratings_weighted.png" alt="Distribution of per-place mean ratings and the top 10 by weighted rating"><figcaption>Left: per-place means cluster tightly around {{ r.global_mean }} with a 3.5 'loved' cut. Right: the Bayesian weighted top 10, led by {{ r.top10_by_weighted[0].Place_Name }}, shrinks places with few votes toward the mean.</figcaption></figure>
+  <figure class="card" style="grid-column:1/-1"><img src="/static/rating_signal.png" alt="Rating histogram, and per-place and per-user mean spread versus a shuffled null"><figcaption>Left: counts of 1–5 stars are nearly equal. Middle and right: the observed spread of per-place and per-user means (teal) sits on top of what random shuffling produces (grey). A real rating set would show a wider teal spread. This is the evidence that the collaborative metrics cannot beat the baseline here.</figcaption></figure>
+  <figure class="card"><img src="/static/top_loved.png" alt="Loved places per city and per category"><figcaption>{{ r.most_loved_city }} and Yogyakarta hold two thirds of the {{ r.loved_count }} loved spots; amusement parks lead the loved categories with nature preserves close behind, matching the notebook's conclusion.</figcaption></figure>
+</div>
+
+<div class="grid section">
+  <div class="card"><h2>Top 10 by weighted rating</h2><div class="scroll"><table><thead><tr><th>#</th><th>Place</th><th>City</th><th>Category</th><th>Mean</th><th>n</th><th>Weighted</th></tr></thead><tbody>
+    {% for t in r.top10_by_weighted %}<tr><td class="meta">{{ loop.index }}</td><td>{{ t.Place_Name }}</td><td>{{ t.City }}</td><td>{{ p.category_en[t.Category] }}</td><td>{{ t.mean_rating }}</td><td class="meta">{{ t.n_ratings }}</td><td><b>{{ t.weighted_rating }}</b></td></tr>{% endfor %}
+  </tbody></table></div></div>
+  <div class="card"><h2>Cleaning applied</h2><ul style="margin:0;padding-left:20px">{% for line in f.cleaning %}<li class="muted">{{ line }}</li>{% endfor %}</ul>
+    <h3 style="margin-top:14px">Loved share per category</h3><p class="muted">Share of each category's places with mean rating above {{ r.loved_threshold }}:</p>
+    <table><tbody>{% for k, v in r.loved_share_by_category_pct.items() %}<tr><td>{{ p.category_en[k] }}</td><td style="width:50%"><div class="bar"><i style="width:{{ v * 8 }}%"></i></div></td><td class="meta">{{ v }}%</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endif %}
+{% endblock %}

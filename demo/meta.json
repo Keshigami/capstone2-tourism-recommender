@@ -1,0 +1,72 @@
+{
+ "folder": "capstone2-tourism-recommender",
+ "slug": "capstone2-tourism-recommender",
+ "port": 8103,
+ "title": "Tourism recommender (Capstone 2, Part 2)",
+ "one_liner": "Explores 437 Indonesian tourist spots and 10k user ratings, then recommends places to a known user or to someone who only states a category, city and budget, with a reason for every pick.",
+ "duration_s": 65.4,
+ "highlight_s": 3.3,
+ "steps": [
+  {
+   "n": 1,
+   "text": "Capstone 2, part 2: recommendations for user 1 on the hybrid route, shown on load",
+   "ok": true,
+   "t": 2.5
+  },
+  {
+   "n": 2,
+   "text": "Change the user: user 42",
+   "ok": true,
+   "t": 8.3
+  },
+  {
+   "n": 3,
+   "text": "Or describe your interests: nature preserve, Bandung, budget Rp 20,000",
+   "ok": true,
+   "t": 16.6
+  },
+  {
+   "n": 4,
+   "text": "Find places: content-based ranking with a reason for every pick",
+   "ok": true,
+   "t": 23.6
+  },
+  {
+   "n": 5,
+   "text": "Offline metrics: RMSE, hit-rate@10, precision@5",
+   "ok": true,
+   "t": 31.5
+  },
+  {
+   "n": 6,
+   "text": "Findings and charts: the EDA behind the engine",
+   "ok": true,
+   "t": 36.3
+  },
+  {
+   "n": 7,
+   "text": "Who rates: the age distribution of the 300 users",
+   "ok": true,
+   "t": 40.7
+  },
+  {
+   "n": 8,
+   "text": "What is on offer: categories and each city's speciality",
+   "ok": true,
+   "t": 46.0
+  },
+  {
+   "n": 9,
+   "text": "The ratings carry almost no signal: near-uniform 1 to 5, 0.008 correlation with the public rating",
+   "ok": true,
+   "t": 51.3
+  },
+  {
+   "n": 10,
+   "text": "So collaborative filtering sits at the baseline; the content route is what carries the recommendations",
+   "ok": true,
+   "t": 58.0
+  }
+ ],
+ "skipped": []
+}

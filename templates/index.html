@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% set active = 'home' %}
+{% block body %}
+{% set m = metrics %}
+<div class="stats">
+  <div class="card stat"><b>{{ '%.3f'|format(m.rmse.svd) if m else '–' }}</b><span>RMSE, SVD on 20% held-out ratings (global-mean baseline {{ '%.3f'|format(m.rmse.baseline_global_mean) if m else '–' }})</span></div>
+  <div class="card stat"><b>{{ '%.1f'|format(100 * m.ranking.hybrid['hit_rate@10']) if m else '–' }}%</b><span>hit-rate@10, hybrid ({{ m.ranking.n_eval_users if m else '–' }} test users; random {{ '%.1f'|format(100 * m.ranking.random_expected['hit_rate@10']) if m else '–' }}%)</span></div>
+  <div class="card stat"><b>{{ '%.2f'|format(100 * m.ranking.hybrid['precision@5']) if m else '–' }}%</b><span>precision@5, hybrid (random {{ '%.2f'|format(100 * m.ranking.random_expected['precision@5']) if m else '–' }}%)</span></div>
+  <div class="card stat"><b>{{ options.user_ids|length }} / {{ m.data.places if m else options.cities|length }}</b><span>users / places in the rating matrix</span></div>
+</div>
+
+<div class="two">
+  <div>
+    <div class="card section">
+      <h2>Pick a user</h2>
+      <form method="get" action="/" data-loading class="form-grid">
+        <div class="f"><label for="input">User id (1–{{ options.user_ids|length }})</label>
+          <select id="input" name="user_id">
+            {% for u in options.user_ids %}<option value="{{ u }}" {{ 'selected' if form.user_id == u else '' }}>User {{ u }}</option>{% endfor %}
+          </select></div>
+        <div class="f"><label for="route">Route</label>
+          <select id="route" name="route">
+            <option value="hybrid" {{ 'selected' if route == 'hybrid' }}>Hybrid (collaborative + content, rank fusion)</option>
+            <option value="collaborative" {{ 'selected' if route == 'collaborative' }}>Collaborative only (SVD)</option>
+            <option value="content" {{ 'selected' if route == 'content' }}>Content only (similar to what they liked)</option>
+          </select></div>
+        <div class="row"><button id="run" type="submit">Recommend</button>
+          <a class="btn ghost" href="/?user_id=1">User 1</a><a class="btn ghost" href="/?user_id=42">User 42</a><a class="btn ghost" href="/?user_id=286">User 286</a></div>
+      </form>
+    </div>
+    <div class="card section">
+      <h2>Or describe your interests</h2>
+      <form method="get" action="/" data-loading class="form-grid" id="interests">
+        <input type="hidden" name="mode" value="interests">
+        <div class="f"><label for="category">Category</label>
+          <select id="category" name="category"><option value="">Any</option>
+            {% for c in options.categories %}<option value="{{ c.id }}" {{ 'selected' if form.category == c.id }}>{{ c.label }}</option>{% endfor %}
+          </select></div>
+        <div class="f"><label for="city">City</label>
+          <select id="city" name="city"><option value="">Any</option>
+            {% for c in options.cities %}<option value="{{ c }}" {{ 'selected' if form.city == c }}>{{ c }}</option>{% endfor %}
+          </select></div>
+        <div class="f"><label for="budget">Max ticket price, IDR (median place costs Rp {{ '{:,}'.format(options.price_quantiles[0.5]) }})</label>
+          <input id="budget" name="budget" inputmode="numeric" placeholder="e.g. 20000" value="{{ form.budget }}"></div>
+        <div class="row"><button type="submit" class="ghost">Find places</button>
+          <a class="btn ghost" href="/?mode=interests&category=Cagar+alam&city=Bandung&budget=20000">Nature, Bandung, ≤20k</a>
+          <a class="btn ghost" href="/?mode=interests&category=Budaya&city=Yogyakarta">Culture in Yogyakarta</a></div>
+      </form>
+    </div>
+  </div>
+
+  <div>
+    {% if error %}<div class="err" role="alert"><b>Nothing to show.</b> {{ error }}</div>{% endif %}
+    {% if mode == 'user' and profile %}
+    <div class="card section">
+      <h2>User {{ profile.user_id }}</h2>
+      <p class="muted">Age {{ profile.age }}, from {{ profile.location }}. Rated {{ profile.n_rated }} places, average {{ profile.mean_rating }}/5.
+        {% if profile.favourite_category %}Rates <b>{{ options.categories|selectattr('id','equalto',profile.favourite_category)|map(attribute='label')|first }}</b> highest{% if profile.favourite_city %}, mostly in <b>{{ profile.favourite_city }}</b>{% endif %}.{% endif %}</p>
+      <details><summary>Places they already rated ({{ rated|length }}), these never appear in the list below</summary>
+        <div class="scroll" style="margin-top:8px"><table><thead><tr><th>Place</th><th>City</th><th>Category</th><th>Rating</th></tr></thead><tbody>
+        {% for r in rated %}<tr><td>{{ r.Place_Name }}</td><td>{{ r.City }}</td><td>{{ r.Category_en }}</td><td class="meta">{{ '%.0f'|format(r.Place_Ratings) }}/5</td></tr>{% endfor %}
+        </tbody></table></div></details>
+    </div>
+    {% endif %}
+    <div class="card" id="result" data-mode="{{ mode or '' }}" data-count="{{ recs|length }}">
+      {% if recs %}
+      <h2>{% if mode == 'user' %}Top {{ recs|length }} places for user {{ profile.user_id }} <span class="pill">{{ route }}</span>{% else %}Top {{ recs|length }} places for your interests <span class="pill cb">content</span>{% endif %}</h2>
+      <p class="meta">Legend: <span class="pill cf">collaborative</span> predicted from other users' ratings · <span class="pill cb">content</span> similar category, city, price, description · <span class="pill hy">hybrid</span> on both lists</p>
+      {% for r in recs %}
+      <div class="rec">
+        <div class="n">{{ loop.index }}</div>
+        <div>
+          <div class="name">{{ r.name }} <span class="muted">· {{ r.city }}</span></div>
+          <div class="tags"><span class="pill {{ 'cf' if r.source == 'collaborative' else ('hy' if r.source == 'hybrid' else 'cb') }}">{{ r.source }}</span>
+            <span class="pill">{{ r.category_en }}</span><span class="pill">{{ 'free' if r.price == 0 else 'Rp {:,}'.format(r.price) }}</span>
+            <span class="meta">{{ r.mean_rating }}/5 from {{ r.n_ratings }} users</span></div>
+          <div class="why">{{ r.reason }}</div>
+        </div>
+      </div>
+      {% endfor %}
+      {% elif not error %}
+      <div class="empty">Pick a user and press Recommend, or describe your interests on the left.</div>
+      {% else %}
+      <div class="empty">Try one of the sample buttons on the left.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
